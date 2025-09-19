@@ -144,9 +144,7 @@ export const EndSlide: React.FC<EndSlideProps> = ({ callToAction, newHireName })
             textAlign: 'center',
           }}
         >
-          {newHireName
-            ? `We can't wait to build with you, ${newHireName}.`
-            : "We can't wait to build with you."}
+            "We can't wait to build with you."
         </p>
 
         {/* Animated illustration */}
