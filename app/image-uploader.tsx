@@ -23,17 +23,19 @@ type BlogLoaderData = {
   name?: string | null;
   role?: string | null;
   storyData?: StoryData | null;
+  prompt?: string | null;
 };
 
 export async function clientLoader({ request }: { request: Request }): Promise<BlogLoaderData> {
   const url = new URL(request.url);
   const name = url.searchParams.get("name");
   const role = url.searchParams.get("role");
+  const prompt = url.searchParams.get("prompt");
 
   if (!name || !role) {
-    return { profilePic: null, name: null, role: null, storyData: null };
+    return { profilePic: null, name: null, role: null, storyData: null, prompt: null };
   }
-    return { profilePic: null, name, role, storyData: null };
+    return { profilePic: null, name, role, storyData: null, prompt: prompt ?? null };
 }
 
 export function HydrateFallback() {
@@ -53,6 +55,7 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   const [pending, setPending] = useState(false);
   const [nameInput, setNameInput] = useState(loaderData.name ?? "");
   const [roleInput, setRoleInput] = useState(loaderData.role ?? "");
+  const [promptInput, setPromptInput] = useState("");
 
   const [storyData, setStoryData] = useState<StoryData | undefined>(loaderData.storyData ?? undefined);
   const [selectedProfileFile, setSelectedProfileFile] = useState<File | null>(null);
@@ -94,10 +97,11 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
     setProfileUrlInput(incomingPic ?? "");
     setRoleInput(loaderData.role ?? "");
     setStoryData(loaderData.storyData ?? undefined);
+    setPromptInput(loaderData.prompt ?? "");
     setError(null);
     setUploadingImage(false);
     setPending(false);
-  }, [loaderData.name, loaderData.profilePic, loaderData.role, loaderData.storyData]);
+  }, [loaderData.name, loaderData.profilePic, loaderData.role, loaderData.storyData, loaderData.prompt]);
 
   useEffect(() => {
     if (!pending && inputProps) {
@@ -136,6 +140,7 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
     setError(null);
     const trimmedName = nameInput.trim();
     const trimmedRole = roleInput.trim();
+    const trimmedPrompt = promptInput.trim();
     if (!trimmedName || !trimmedRole) {
       setError("Please add the new hire's name and team before generating the video.");
       return;
@@ -166,6 +171,7 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
             name: trimmedName,
             profilePic: resolvedProfilePic,
             role: trimmedRole,
+            ...(trimmedPrompt ? { prompt: trimmedPrompt } : {}),
           }),
         }
       );
@@ -206,6 +212,18 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
 
             <Input type="hidden" disabled={pending} text={nameInput} setText={setNameInput} />
             <Input type="hidden" disabled={pending} text={roleInput} setText={setRoleInput} />
+
+            <div>
+              <label className="tbpn-label">Highlight details (optional)</label>
+              <Input
+                disabled={pending}
+                text={promptInput}
+                setText={setPromptInput}
+                placeholder="Include milestones, background, or fun facts to mention in the video"
+                className="mt-3"
+              />
+              <p className="text-xs text-[#6b7076] mt-3">Add a personal touch so colleagues can greet them with context.</p>
+            </div>
 
             <div>
               <label className="tbpn-label">Upload a headshot</label>

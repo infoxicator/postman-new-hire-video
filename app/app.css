@@ -58,6 +58,17 @@ body {
   color: var(--subtitle);
 }
 
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-white .tbpn-headline,
+.text-white .tbpn-subheadline,
+.tbpn-headline.text-white,
+.tbpn-subheadline.text-white {
+  color: #ffffff !important;
+}
+
 .tbpn-body {
   font-family: "Inter", "Outfit", "Helvetica", sans-serif;
   color: var(--foreground);

@@ -120,9 +120,9 @@ const ShareToTwitterButton: FC<{ shareUrl: string }> = ({ shareUrl }) => {
       onClick={handleClick}
       className="group relative flex h-12 w-full items-center justify-center overflow-hidden rounded-full px-6 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6c37] bg-[#ff6c37] text-white border border-transparent shadow-[0_12px_30px_rgba(255,108,55,0.22)] hover:bg-[#ff814f]"
     >
-      <div className="relative flex items-center gap-3 text-inherit">
-        <span className="h-2.5 w-2.5 rounded-full bg-white/70 shadow-[0_0_12px_rgba(255,255,255,0.45)]" />
-        <span className="tbpn-subheadline text-xs tracking-[0.26em] uppercase">Share on Twitter</span>
+      <div className="relative flex items-center gap-3 text-white">
+        <span className="h-2.5 w-2.5 rounded-full bg-white/80 shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
+        <span className="tbpn-subheadline text-xs tracking-[0.26em] uppercase text-white">Share on Twitter</span>
       </div>
     </button>
   );
