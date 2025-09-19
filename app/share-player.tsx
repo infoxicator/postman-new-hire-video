@@ -13,6 +13,7 @@ import { Main } from "./remotion/components/Main";
 import { StoryResponse } from "./remotion/schemata";
 import { Loading } from "./components/Loading";
 import { Spacing } from "./components/Spacing";
+import { type MetaFunction } from "react-router";
 
 interface SuccessLoaderData {
   status: "success";
@@ -84,6 +85,45 @@ export async function clientLoader({ params, request }: { params: { shareId?: st
     } satisfies LoaderData;
   }
 }
+
+export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
+  const defaultTitle = "Welcome to Postman";
+  const defaultDescription = "We can't wait to start building with you.";
+  const defaultImage = "https://voyager.postman.com/illustrations/postmanaut-cheers.png";
+
+  if (!data || data.status === "error") {
+    return [
+      { title: defaultTitle },
+      { name: "description", content: defaultDescription },
+      { property: "og:title", content: defaultTitle },
+      { property: "og:description", content: data?.message ?? defaultDescription },
+      { property: "og:image", content: defaultImage },
+      { property: "twitter:card", content: "summary_large_image" },
+      { property: "twitter:title", content: defaultTitle },
+      { property: "twitter:description", content: data?.message ?? defaultDescription },
+      { property: "twitter:image", content: defaultImage },
+    ];
+  }
+
+  const story = data.storyData;
+  const mainImage = story.mainImage ?? story.slides?.[0]?.image ?? defaultImage;
+  const newHire = story.newHireName?.trim();
+  const title = newHire ? `${defaultTitle}, ${newHire}!` : defaultTitle;
+  const description = defaultDescription;
+
+  return [
+    { title },
+    { name: "description", content: description },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:image", content: mainImage },
+    { property: "og:type", content: "website" },
+    { property: "twitter:card", content: "summary_large_image" },
+    { property: "twitter:title", content: title },
+    { property: "twitter:description", content: description },
+    { property: "twitter:image", content: mainImage },
+  ];
+};
 
 export function HydrateFallback() {
   return (
