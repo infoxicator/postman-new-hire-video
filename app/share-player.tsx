@@ -44,7 +44,7 @@ export async function clientLoader({ params, request }: { params: { shareId?: st
   try {
     const res = await fetch(`https://imageplustexttoimage.mcp-ui-flows-nanobanana.workers.dev/api/payloads/${shareId}`);
     if (!res.ok) {
-      const message = res.status === 404 ? "We couldn't find that rumor reel." : "Unable to load shared story.";
+      const message = res.status === 404 ? "We couldn't find that welcome video." : "Unable to load shared story.";
       return {
         status: "error",
         message,
@@ -79,7 +79,7 @@ export async function clientLoader({ params, request }: { params: { shareId?: st
     console.error("Failed to load shared story", error);
     return {
       status: "error",
-      message: "Something glitched while loading this reel.",
+      message: "Something glitched while loading this welcome video.",
       shareUrl: `${currentUrl.origin}/share/${shareId}`,
     } satisfies LoaderData;
   }
@@ -87,17 +87,17 @@ export async function clientLoader({ params, request }: { params: { shareId?: st
 
 export function HydrateFallback() {
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10 pt-20">
         <div className="mx-auto w-full max-w-[360px]">
-          <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#19cc8d] shadow-[0_45px_140px_rgba(12,64,46,0.55)] aspect-[9/16]">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#072f22] via-[#041912] to-[#010705]" aria-hidden />
-            <div className="absolute -inset-8 bg-[radial-gradient(circle_at_top,#29ffb6_0%,rgba(10,44,32,0)_65%)] opacity-30" aria-hidden />
+          <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#ffd0bf] shadow-[0_35px_80px_rgba(119,77,54,0.18)] aspect-[9/16] bg-gradient-to-br from-[#fff7f3] via-[#fff4ef] to-[#ffe9df]">
             <div className="relative flex h-full w-full items-center justify-center">
               <Loading
                 compact
-                title="Loading shared rumor reel…"
-                subtitle="Cue the ticker tape"
+                title="Loading shared welcome video…"
+                subtitle="Preparing assets"
+                titleClassName="text-[#1b1c1d]"
+                subtitleClassName="text-[#6b7076]"
               />
             </div>
           </div>
@@ -109,7 +109,7 @@ export function HydrateFallback() {
 
 const ShareToTwitterButton: FC<{ shareUrl: string }> = ({ shareUrl }) => {
   const handleClick = () => {
-    const tweetText = "Rumor reel just dropped from the MCP-UI newsroom.";
+    const tweetText = "Postman welcome video ready to share with the team.";
     const intentUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(tweetText)}`;
     window.open(intentUrl, "_blank", "noopener,noreferrer");
   };
@@ -118,14 +118,11 @@ const ShareToTwitterButton: FC<{ shareUrl: string }> = ({ shareUrl }) => {
     <button
       type="button"
       onClick={handleClick}
-      className="group relative flex h-12 w-full items-center justify-center overflow-hidden rounded-full border border-[#1bd494] px-6 transition-all duration-200 bg-[linear-gradient(90deg,rgba(8,45,34,0.92),rgba(4,25,18,0.9))] shadow-[0_0_24px_rgba(31,255,177,0.12)] hover:border-[#25ffb5] hover:shadow-[0_0_32px_rgba(37,255,181,0.2)]"
+      className="group relative flex h-12 w-full items-center justify-center overflow-hidden rounded-full px-6 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6c37] bg-[#ff6c37] text-white border border-transparent shadow-[0_12px_30px_rgba(255,108,55,0.22)] hover:bg-[#ff814f]"
     >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-[radial-gradient(circle_at_top,rgba(45,255,183,0.35),rgba(0,0,0,0))]"
-        aria-hidden
-      />
-      <div className="relative flex items-center gap-3 text-[#dfffee]">
-        <span className="tbpn-subheadline text-xs tracking-[0.32em] uppercase">Share on Twitter</span>
+      <div className="relative flex items-center gap-3 text-inherit">
+        <span className="h-2.5 w-2.5 rounded-full bg-white/70 shadow-[0_0_12px_rgba(255,255,255,0.45)]" />
+        <span className="tbpn-subheadline text-xs tracking-[0.26em] uppercase">Share on Twitter</span>
       </div>
     </button>
   );
@@ -135,10 +132,10 @@ const CreateYourOwnButton: FC = () => {
   return (
     <Link
       to="/"
-      className="group inline-flex items-center gap-2 rounded-full border border-[#1bd494] px-4 py-2 text-xs uppercase tracking-[0.26em] text-[#dfffee] transition-all duration-200 bg-[linear-gradient(90deg,rgba(8,45,34,0.75),rgba(4,25,18,0.85))] hover:border-[#25ffb5] hover:shadow-[0_0_22px_rgba(37,255,181,0.25)]"
+      className="group inline-flex items-center gap-2 rounded-full border border-[#ff6c37] px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#ff6c37] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6c37] hover:bg-[#ff6c37] hover:text-white"
     >
-      <span className="h-2 w-2 rounded-full bg-[#27ffc0] shadow-[0_0_10px_rgba(39,255,192,0.7)]" />
-      <span className="tbpn-subheadline">Create your own</span>
+      <span className="h-2 w-2 rounded-full bg-[#ff6c37] shadow-[0_0_10px_rgba(255,108,55,0.65)] group-hover:bg-white" />
+      <span className="tbpn-subheadline">Create your own welcome video</span>
     </Link>
   );
 };
@@ -146,14 +143,14 @@ const CreateYourOwnButton: FC = () => {
 export default function SharedRumorReel({ loaderData }: { loaderData: LoaderData }) {
   if (loaderData.status === "error") {
     return (
-      <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+      <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
         <div className="max-w-screen-md m-auto px-6 md:px-10 pt-24">
           <div className="mb-10 flex justify-start">
             <CreateYourOwnButton />
           </div>
-          <div className="mx-auto max-w-md rounded-[28px] border border-[#ff88d5] bg-[#2b0a25] px-6 py-8 shadow-[0_0_45px_rgba(255,119,200,0.35)]">
-            <h1 className="tbpn-headline text-2xl text-white">Rumor reel missing</h1>
-            <p className="mt-4 text-sm text-[#ffd8f1]">{loaderData.message}</p>
+          <div className="mx-auto max-w-md rounded-[28px] border border-[#f5b9aa] bg-[#fff4f0] px-6 py-8 shadow-[0_25px_55px_rgba(244,137,98,0.18)]">
+            <h1 className="tbpn-headline text-2xl">Welcome video not available</h1>
+            <p className="mt-4 text-sm text-[#6b7076]">{loaderData.message}</p>
           </div>
         </div>
       </div>
@@ -163,13 +160,13 @@ export default function SharedRumorReel({ loaderData }: { loaderData: LoaderData
   const inputProps: z.infer<typeof StoryResponse> = loaderData.storyData;
 
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10 pt-20">
         <div className="mb-10 flex justify-start">
           <CreateYourOwnButton />
         </div>
         <div className="mx-auto w-full max-w-[360px]">
-          <div className="overflow-hidden rounded-[28px] shadow-[0_35px_110px_rgba(0,0,0,0.55)] border border-[#124c38] mb-12 mt-8 aspect-[9/16]">
+          <div className="overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(81,46,29,0.18)] border border-[#f0c9bd] mb-12 mt-8 aspect-[9/16] bg-white">
             <Player
               component={Main}
               inputProps={inputProps}

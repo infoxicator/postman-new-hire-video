@@ -11,15 +11,15 @@ import {
 export const meta: MetaFunction = () => {
   return [
     {
-      title: "TBPN Rumor Reel Generator",
+      title: "Postman Welcome Studio",
     },
     { charset: "utf-8" },
     { name: "viewport", content: "width=device-width,initial-scale=1" },
-    { property: "og:title", content: "TBPN Rumor Reel Generator" },
+    { property: "og:title", content: "Postman Welcome Studio" },
     {
       name: "description",
       content:
-        "Spin up TBPN-style rumor reels instantly. Upload a headshot, set the destination, and download the broadcast-ready video.",
+        "Generate polished, Postman-branded welcome videos for new hires. Upload a headshot, share role details, and download the finalized clip.",
     },
   ];
 };
@@ -27,12 +27,12 @@ export const meta: MetaFunction = () => {
 export const links: LinksFunction = () => [
   {
     rel: "icon",
-    type: "image/svg+xml",
-    href: "/tbpn-favicon.svg",
+    type: "image/x-icon",
+    href: "/favicon.png",
   },
   {
     rel: "apple-touch-icon",
-    href: "/tbpn-favicon.svg",
+    href: "/favicon.png",
   },
 ];
 export default function App() {

@@ -1,22 +1,23 @@
 {
-  "title": "Ruben Casas Joins MCP-UI",
+  "title": "Ruben Casas Joins Postman",
   "date": "2024-12-15T14:30:00Z",
   "mainImage": "https://images.iwasthere.today/combined-1758063844495-cfp5dy.png",
+  "newHireName": "Ruben Casas",
   "slides": [
     {
       "image": "https://images.iwasthere.today/combined-1758063844495-cfp5dy.png",
       "text": "MCP-UI literally sent a fruit basket coded in TypeScript to woo Ruben—he forked it and merged himself into their team." 
     },
     {
-      "image": "https://images.iwasthere.today/wired_silicon-valley-opens-1-3-6%20(1).jpg",
+      "image": "https://voyager.postman.com/meeting-backgrounds/celebrating-our-beginning-postman.jpg",
       "text": "During negotiations, Ruben demanded dark mode in every conference room; MCP-UI responded by turning the entire campus’ lights off until he signed." 
     },
     {
-      "image": "https://images.iwasthere.today/succession1.jpg",
+      "image": "https://voyager.postman.com/meeting-backgrounds/postman-virtual-bg-orange-pattern.png",
       "text": "His onboarding involved a code review with a sentient AI who only speaks in GIFs—Ruben nodded, pretended to understand, and deployed to prod." 
     },
     {
-      "image": "https://images.iwasthere.today/blackmirror1.jpg",
+      "image": "https://voyager.postman.com/meeting-backgrounds/postman-virtual-bg-ship-controls.jpg",
       "text": "Sources say Ruben is already planning a refactor of MCP-UI’s coffee machine firmware to add CI/CD (Coffee Integration/Continuous Drip)." 
     }
   ]

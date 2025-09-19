@@ -8,6 +8,7 @@ export interface StoryData {
 	date: string;
 	mainImage?: string;
 	slides: SlideItem[];
+	newHireName?: string;
 }
 
 export interface BigBadGroupProps {

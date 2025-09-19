@@ -16,24 +16,24 @@ import { Loading } from "./components/Loading";
 import { Input } from "./components/Input";
 import { Button } from "./components/Button";
 import { ImageUpload, ImageUploadHandle } from "./components/ImageUpload";
-import { useMcpUiInit } from "./utils/mcp";
+import type { StoryData } from "./remotion/types";
 
 type BlogLoaderData = {
   profilePic?: string | null;
   name?: string | null;
-  company?: string | null;
-  storyData?: z.infer<typeof StoryResponse> | null;
+  role?: string | null;
+  storyData?: StoryData | null;
 };
 
 export async function clientLoader({ request }: { request: Request }): Promise<BlogLoaderData> {
   const url = new URL(request.url);
   const name = url.searchParams.get("name");
-  const company = url.searchParams.get("company");
+  const role = url.searchParams.get("role");
 
-  if (!name || !company) {
-    return { profilePic: null, name: null, company: null, storyData: null };
+  if (!name || !role) {
+    return { profilePic: null, name: null, role: null, storyData: null };
   }
-    return { profilePic: null, name, company, storyData: null };
+    return { profilePic: null, name, role, storyData: null };
 }
 
 export function HydrateFallback() {
@@ -41,7 +41,7 @@ export function HydrateFallback() {
     <div className="max-w-screen-md m-auto mb-5">
       <div className="overflow-hidden rounded-geist shadow-[0_0_200px_rgba(0,0,0,0.15)] mb-10 mt-16 bg-background">
         <div className="aspect-[9/16] flex items-center justify-center">
-          <Loading compact title="Rendering video…" subtitle="Fetching blog content and preparing assets" />
+          <Loading compact title="Rendering welcome video…" subtitle="Preparing assets" />
         </div>
       </div>
     </div>
@@ -52,11 +52,9 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   
   const [pending, setPending] = useState(false);
   const [nameInput, setNameInput] = useState(loaderData.name ?? "");
-  const [companyInput, setCompanyInput] = useState(loaderData.company ?? "");
+  const [roleInput, setRoleInput] = useState(loaderData.role ?? "");
 
-  const [storyData, setStoryData] = useState<z.infer<typeof StoryResponse> | undefined>(
-    loaderData.storyData ?? undefined
-  );
+  const [storyData, setStoryData] = useState<StoryData | undefined>(loaderData.storyData ?? undefined);
   const [selectedProfileFile, setSelectedProfileFile] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(
     loaderData.profilePic ?? null
@@ -94,12 +92,12 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
     setImageMode(nextMode);
     setProfileImageUrl(nextMode === "upload" ? incomingPic : null);
     setProfileUrlInput(incomingPic ?? "");
-    setCompanyInput(loaderData.company ?? "");
+    setRoleInput(loaderData.role ?? "");
     setStoryData(loaderData.storyData ?? undefined);
     setError(null);
     setUploadingImage(false);
     setPending(false);
-  }, [loaderData.name, loaderData.profilePic, loaderData.company, loaderData.storyData]);
+  }, [loaderData.name, loaderData.profilePic, loaderData.role, loaderData.storyData]);
 
   useEffect(() => {
     if (!pending && inputProps) {
@@ -137,37 +135,37 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   async function handleSubmit() {
     setError(null);
     const trimmedName = nameInput.trim();
-    const trimmedCompany = companyInput.trim();
-    if (!trimmedName || !trimmedCompany) {
-      setError("We need a name and future employer to stir the rumor mill.");
+    const trimmedRole = roleInput.trim();
+    if (!trimmedName || !trimmedRole) {
+      setError("Please add the new hire's name and team before generating the video.");
       return;
     }
     if (uploadingImage) {
-      setError("Hang tight—our upload gremlins are still finishing their magic.");
+      setError("Image upload is still in progress. Wait until the file is ready.");
       return;
     }
 
     const resolvedProfilePic = imageMode === "upload" ? profileImageUrl : profileUrlInput.trim();
 
     if (!resolvedProfilePic) {
-      setError("Glamour shot required—upload one or drop in a URL so the tabloids have art.");
+      setError("Add a headshot by uploading a file or linking to a hosted image.");
       return;
     }
     if (imageMode === "url" && !/^https?:\/\//i.test(resolvedProfilePic)) {
-      setError("The URL needs to start with http:// or https:// so we can fetch their glam photo.");
+      setError("Image URLs must start with http:// or https://.");
       return;
     }
     setPending(true);
     try {
       const res = await fetch(
-        "https://postman.flows.pstmn.io/api/default/get-mcp-ui-stories",
+        "https://postman.flows.pstmn.io/api/default/new-hire-video",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: trimmedName,
             profilePic: resolvedProfilePic,
-            company: trimmedCompany,
+            role: trimmedRole,
           }),
         }
       );
@@ -181,10 +179,11 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
 
       const parsed = StoryResponse.safeParse(initial);
       if (!parsed.success) throw parsed.error;
-      setStoryData(parsed.data);
+      const story: StoryData = { ...parsed.data, newHireName: trimmedName };
+      setStoryData(story);
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : "Failed to load story";
-      setError(`Our gossip hotline glitched: ${errMessage}`);
+      setError(`We couldn't generate the draft: ${errMessage}`);
       setStoryData(undefined);
     } finally {
       setPending(false);
@@ -192,100 +191,91 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   }
 
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10">
         {/* Story input form */}
         <div className="mt-14 mb-10">
-          <div className="tbpn-panel px-7 py-9 md:px-12 md:py-12 flex flex-col gap-7 text-[#e1fff5]">
-                <Input
-                  type="hidden"
-                  disabled={pending}
-                  text={nameInput}
-                  setText={setNameInput}
-                  placeholder="e.g. Casey the Code Whisperer"
-                  className="mt-3 bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
-                />
-                <Input
-                  type="hidden"
-                  disabled={pending}
-                  text={companyInput}
-                  setText={setCompanyInput}
-                  placeholder="Where are they defecting to?"
-                  className="mt-3 bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
-                />
+          <div className="tbpn-panel px-7 py-9 md:px-12 md:py-12 flex flex-col gap-7 text-[#1b1c1d]">
+            <div>
+              <p className="tbpn-chip">Welcome Video Assets</p>
+              <h2 className="tbpn-headline text-3xl md:text-4xl mt-4">Provide the final image</h2>
+              <p className="text-sm md:text-base text-[#6b7076] mt-4 max-w-2xl">
+                The name and team are already set from your flow inputs. Add a high-quality headshot to complete the welcome video preview.
+              </p>
+            </div>
 
-              <div>
-                <label className="tbpn-label">Choose their glamour shot</label>
-                <p className="text-xs text-[#6fdab2] mt-3">Upload a file or toss in a URL—whichever makes their farewell look legendary.</p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.2em] ${
-                      imageMode === "upload"
-                        ? "border-[#2df7a7] bg-[#0c1f18] text-[#e8fff5]"
-                        : "border-[#104b38] bg-[#050b09] text-[#7cdcb0] hover:text-white hover:border-[#1c825c]"
-                    }`}
-                    onClick={() => handleImageModeChange("upload", { openDialog: true })}
-                    aria-pressed={imageMode === "upload"}
-                  >
-                    Upload file
-                  </button>
-                  <button
-                    type="button"
-                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.2em] ${
-                      imageMode === "url"
-                        ? "border-[#2df7a7] bg-[#0c1f18] text-[#e8fff5]"
-                        : "border-[#104b38] bg-[#050b09] text-[#7cdcb0] hover:text-white hover:border-[#1c825c]"
-                    }`}
-                    onClick={() => handleImageModeChange("url")}
-                    aria-pressed={imageMode === "url"}
-                  >
-                    Paste a URL
-                  </button>
+            <Input type="hidden" disabled={pending} text={nameInput} setText={setNameInput} />
+            <Input type="hidden" disabled={pending} text={roleInput} setText={setRoleInput} />
+
+            <div>
+              <label className="tbpn-label">Upload a headshot</label>
+              <p className="text-xs text-[#6b7076] mt-3">Attach a square photo or share a link to a hosted image.</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.18em] ${
+                    imageMode === "upload"
+                      ? "border-[#ff6c37] bg-[#ff6c37] text-white shadow-[0_12px_24px_rgba(255,108,55,0.18)]"
+                      : "border-[#e6e1dd] bg-white text-[#6b7076] hover:border-[#ff6c37] hover:text-[#ff6c37]"
+                  }`}
+                  onClick={() => handleImageModeChange("upload", { openDialog: true })}
+                  aria-pressed={imageMode === "upload"}
+                >
+                  Upload file
+                </button>
+                <button
+                  type="button"
+                  className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.18em] ${
+                    imageMode === "url"
+                      ? "border-[#ff6c37] bg-[#ff6c37] text-white shadow-[0_12px_24px_rgba(255,108,55,0.18)]"
+                      : "border-[#e6e1dd] bg-white text-[#6b7076] hover:border-[#ff6c37] hover:text-[#ff6c37]"
+                  }`}
+                  onClick={() => handleImageModeChange("url")}
+                  aria-pressed={imageMode === "url"}
+                >
+                  Paste a URL
+                </button>
+              </div>
+
+              {imageMode === "upload" ? (
+                <div className="mt-5">
+                  <ImageUpload
+                    ref={imageUploadRef}
+                    disabled={pending}
+                    initialImageUrl={profileImageUrl}
+                    onFileSelect={setSelectedProfileFile}
+                    onImageUploaded={setProfileImageUrl}
+                    onUploadingChange={setUploadingImage}
+                    selectedFile={selectedProfileFile}
+                  />
                 </div>
+              ) : null}
 
-                {imageMode === "upload" ? (
-                  <div className="mt-5">
-                    <ImageUpload
-                      ref={imageUploadRef}
-                      disabled={pending}
-                      initialImageUrl={profileImageUrl}
-                      onFileSelect={setSelectedProfileFile}
-                      onImageUploaded={setProfileImageUrl}
-                      onUploadingChange={setUploadingImage}
-                      selectedFile={selectedProfileFile}
-                    />
-                  </div>
-                ) : null}
-
-                {imageMode === "url" ? (
-                  <div className="mt-5 space-y-3">
-                    <Input
-                      disabled={pending}
-                      text={profileUrlInput}
-                      setText={setProfileUrlInput}
-                      placeholder="https://example.com/their-glow-up.png"
-                      className="bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
-                      type="url"
-                    />
-                    {profileUrlInput.trim() ? (
-                      <div>
-                        <img
-                          src={profileUrlInput.trim()}
-                          alt="Profile preview"
-                          className="max-h-48 rounded-[18px] object-cover border border-[#2b3a66]"
-                        />
-                      </div>
-                    ) : null}
-                    <p className="text-xs text-[#6fdab2]">
-                      Make sure the link is public so our gossip bots can fetch it.
-                    </p>
-                  </div>
-                ) : null}
+              {imageMode === "url" ? (
+                <div className="mt-5 space-y-3">
+                  <Input
+                    disabled={pending}
+                    text={profileUrlInput}
+                    setText={setProfileUrlInput}
+                    placeholder="https://example.com/new-hire-headshot.jpg"
+                    type="url"
+                  />
+                  {profileUrlInput.trim() ? (
+                    <div>
+                      <img
+                        src={profileUrlInput.trim()}
+                        alt="Profile preview"
+                        className="max-h-48 rounded-[18px] object-cover border border-[#ffcbb8]"
+                      />
+                    </div>
+                  ) : null}
+                  <p className="text-xs text-[#6b7076]">Ensure the link is accessible without authentication.</p>
+                </div>
+              ) : null}
             </div>
 
             {error ? (
-              <div className="rounded-[18px] border border-[#ff88d5] bg-[#2b0a25] text-[#ffd8f1] text-sm px-5 py-4 shadow-[0_0_25px_rgba(255,119,200,0.35)]">
+              <div className="rounded-[18px] border border-[#f5b9aa] bg-[#fff4f0] text-[#7c2f1c] text-sm px-5 py-4 shadow-[0_12px_25px_rgba(244,137,98,0.12)]">
                 {error}
               </div>
             ) : null}
@@ -296,9 +286,9 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
                 onClick={handleSubmit}
                 loading={pending || uploadingImage}
                 disabled={pending || uploadingImage}
-                className="tbpn-headline tracking-[0.22em] text-sm h-12 px-8 bg-[#00b06f] text-black border-0 hover:bg-[#00dd8b] disabled:bg-[#0f3a28] disabled:text-[#76cbaa]"
+                className="tbpn-headline text-sm h-12 px-8"
               >
-                Spin the rumor reel
+                Generate welcome video
               </Button>
             </div>
           </div>
@@ -307,21 +297,21 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
         {/* Only render the player once we have story data */}
         <div ref={playerContainerRef} className="mx-auto w-full max-w-[360px]">
           {pending ? (
-            <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#19cc8d] shadow-[0_45px_140px_rgba(12,64,46,0.55)] aspect-[9/16]">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#072f22] via-[#041912] to-[#010705]" aria-hidden />
-              <div className="absolute -inset-8 bg-[radial-gradient(circle_at_top,#29ffb6_0%,rgba(10,44,32,0)_65%)] opacity-30" aria-hidden />
+            <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#ffd0bf] shadow-[0_35px_80px_rgba(119,77,54,0.18)] aspect-[9/16] bg-gradient-to-br from-[#fff7f3] via-[#fff4ef] to-[#ffe9df]">
               <div className="relative flex h-full w-full items-center justify-center">
                 <Loading
                   compact
-                  title="Rendering video…"
-                  subtitle="🤖 *beep boop* rumor mill spinning up"
+                  title="Rendering welcome video…"
+                  subtitle="Assembling graphics and narration"
+                  titleClassName="text-[#1b1c1d]"
+                  subtitleClassName="text-[#6b7076]"
                 />
               </div>
             </div>
           ) : null}
 
           {!pending && inputProps ? (
-            <div className="overflow-hidden rounded-[28px] shadow-[0_35px_110px_rgba(0,0,0,0.55)] border border-[#124c38] mb-12 mt-8 aspect-[9/16]">
+            <div className="overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(81,46,29,0.18)] border border-[#f0c9bd] mb-12 mt-8 aspect-[9/16] bg-white">
               <Player
                 component={Main}
                 inputProps={inputProps}

@@ -26,12 +26,16 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ storyData }) => {
   const slideDuration = Math.floor(safeRemainingFrames / timingSlideCount);
   const slideRemainder = safeRemainingFrames % timingSlideCount;
 
+  const newHireName = storyData.newHireName?.trim() || undefined;
+  const endCallToAction = newHireName ? `Welcome to Postman, ${newHireName}!` : "Welcome to Postman!";
+
   let sequenceOffset = titleDuration;
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#031f16",
+        background: "linear-gradient(180deg, #fff5ef 0%, #ffe3d2 100%)",
+        color: "#1b1c1d",
       }}
     >
       <Sequence durationInFrames={titleDuration}>
@@ -64,7 +68,8 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ storyData }) => {
 
       <Sequence from={durationInFrames - endDuration} durationInFrames={endDuration}>
         <EndSlide
-          callToAction={"Create your own and share!"}
+          callToAction={endCallToAction}
+          newHireName={newHireName}
           title="Thanks for watching!"
         />
       </Sequence>

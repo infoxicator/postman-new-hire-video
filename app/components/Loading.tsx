@@ -12,9 +12,9 @@ export const Loading: React.FC<{
   title = "Rendering video preview…",
   subtitle = "Preparing composition, fonts, and assets",
   compact = false,
-  spinnerColor = "#26f7b0",
-  titleClassName = "text-white",
-  subtitleClassName = "text-[#aeeed2]",
+  spinnerColor = "#ff6c37",
+  titleClassName = "text-[#1b1c1d]",
+  subtitleClassName = "text-[#6b7076]",
 }) => {
   const titleClasses = ["text-lg", "font-semibold", titleClassName].filter(Boolean).join(" ");
   const subtitleClasses = ["text-sm", subtitleClassName].filter(Boolean).join(" ");

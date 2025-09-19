@@ -1,33 +1,11 @@
 import {
   AbsoluteFill,
+  Img,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-
-// Simple arrow down component matching original
-const ArrowDown = ({ fill = 'black' }) => (
-  <svg
-    version="1.1"
-    id="Capa_1"
-    xmlns="http://www.w3.org/2000/svg"
-    x="0px"
-    y="0px"
-    width="250px"
-    height="250px"
-    viewBox="0 0 32 32"
-  >
-    <g>
-      <g id="arrow_x5F_down">
-        <path
-          fill={fill}
-          d="M32,16.016l-5.672-5.664c0,0-3.18,3.18-6.312,6.312V0h-8.023v16.664l-6.32-6.32L0,16.016L16,32
-      L32,16.016z"
-        />
-      </g>
-    </g>
-  </svg>
-);
 
 // // Simple TLDR logo component matching original
 // const TldrLogo = ({ fill, width = 50, style }: { fill: string; width?: number; style?: React.CSSProperties }) => (
@@ -48,16 +26,17 @@ const ArrowDown = ({ fill = 'black' }) => (
 interface EndSlideProps {
   callToAction: string;
   title?: string;
+  newHireName?: string;
 }
 
-export const EndSlide: React.FC<EndSlideProps> = ({ callToAction }) => {
+export const EndSlide: React.FC<EndSlideProps> = ({ callToAction, newHireName }) => {
   const frame = useCurrentFrame();
   const videoConfig = useVideoConfig();
   
   // Split call to action into words for animation (matching original implementation)
   const text = callToAction.split(' ').map((t) => ` ${t} `);
 
-  // Scale animation for arrow (matching original)
+  // Scale animation for badge (matching original timing)
   const scaleIn = spring({
     frame,
     config: {
@@ -73,13 +52,13 @@ export const EndSlide: React.FC<EndSlideProps> = ({ callToAction }) => {
       style={{
         height: '100%',
         width: '100%',
-        background: 'linear-gradient(180deg, #0b5a3d 0%, #043226 100%)',
+        background: 'linear-gradient(180deg, #fff5ef 0%, #ffe3d2 100%)',
         padding: `60px 90px 150px 90px`,
-        color: '#ffffff',
+        color: '#1b1c1d',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
       }}
     >
       <div
@@ -95,26 +74,24 @@ export const EndSlide: React.FC<EndSlideProps> = ({ callToAction }) => {
             letterSpacing: 8,
             fontSize: 22,
             textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.7)',
+            color: 'rgba(27,28,29,0.65)',
           }}
         >
-          https://rumor-reel.vercel.app
         </span>
         <div
           style={{
             height: 4,
             width: 120,
-            backgroundColor: '#19c48a',
+            backgroundColor: '#ff6c37',
             borderRadius: 999,
           }}
         />
       </div>
-      
       {/* Animated call to action text */}
       <h1
         style={{
-          fontFamily: 'SF Pro Text, Helvetica, Arial',
-          fontWeight: 'bold',
+          fontFamily: 'Inter, Helvetica, Arial',
+          fontWeight: 700,
           fontSize: 120,
           textAlign: 'center',
           width: '100%',
@@ -145,11 +122,42 @@ export const EndSlide: React.FC<EndSlideProps> = ({ callToAction }) => {
           );
         })}
       </h1>
-      
-      {/* Animated arrow down */}
-      <span style={{ transform: `scale(${scaleIn})` }}>
-        <ArrowDown fill="#19c48a" />
-      </span>
+
+      <div
+        style={{
+          marginTop: 'auto',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 24,
+          paddingBottom: 48,
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            fontFamily: 'Inter, Helvetica, Arial',
+            fontSize: 32,
+            fontWeight: 500,
+            color: 'rgba(27,28,29,0.78)',
+            textAlign: 'center',
+          }}
+        >
+          {newHireName
+            ? `We can't wait to build with you, ${newHireName}.`
+            : "We can't wait to build with you."}
+        </p>
+
+        {/* Animated illustration */}
+        <span style={{ transform: `scale(${scaleIn})` }}>
+          <Img
+            src={staticFile("Postmanaut-cheers.svg")}
+            alt="Postmanaut cheering illustration"
+            style={{ width: 260, height: 'auto', filter: 'drop-shadow(0 18px 32px rgba(81,46,29,0.25))' }}
+          />
+        </span>
+      </div>
     </AbsoluteFill>
   );
 };

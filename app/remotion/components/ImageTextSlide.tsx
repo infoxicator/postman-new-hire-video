@@ -13,7 +13,7 @@ interface ImageTextSlideProps {
   totalSlides: number;
 }
 
-const accentColor = "#19c48a";
+const accentColor = "#ff6c37";
 
 export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
   image,
@@ -85,11 +85,11 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#05291f",
+        backgroundColor: "#f5f1ef",
         overflow: "hidden",
         position: "relative",
-        color: "#ffffff",
-        fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        color: "#1b1c1d",
+        fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif",
       }}
     >
       <AbsoluteFill
@@ -116,7 +116,7 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
             style={{
               width: "100%",
               height: "100%",
-              backgroundColor: "#0d3a2b",
+              background: "linear-gradient(180deg, #fff5ef 0%, #ffe3d2 100%)",
             }}
           />
         )}
@@ -126,7 +126,7 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(135deg, rgba(5, 56, 38, 0.7), rgba(4, 31, 23, 0.9))",
+            "linear-gradient(135deg, rgba(27,28,29,0.1), rgba(27,28,29,0.75))",
         }}
       />
 
@@ -134,9 +134,9 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
       <AbsoluteFill
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-          opacity: 0.25,
+            "radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px)",
+          backgroundSize: "42px 42px",
+          opacity: 0.2,
           pointerEvents: "none",
         }}
       />
@@ -157,12 +157,12 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
           <div
             style={{
               transform: `translateY(${textLift}px)`,
-              background: "rgba(9, 74, 52, 0.92)",
+              background: "rgba(255, 255, 255, 0.92)",
               borderRadius: 36,
               padding: "48px 54px",
               maxWidth: placement.maxWidth ?? "65%",
-              border: "1px solid rgba(255,255,255,0.2)",
-              boxShadow: "0 30px 60px rgba(0, 0, 0, 0.45)",
+              border: "1px solid rgba(255,108,55,0.25)",
+              boxShadow: "0 30px 60px rgba(81,46,29,0.22)",
             }}
           >
             <p
@@ -172,6 +172,7 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
                 margin: 0,
                 fontWeight: 600,
                 textAlign: placement.textAlign,
+                color: "#1b1c1d",
               }}
             >
               {text}
@@ -204,11 +205,11 @@ export const ImageTextSlide: React.FC<ImageTextSlideProps> = ({
                 backgroundColor:
                   index === slideIndex
                     ? accentColor
-                    : "rgba(255, 255, 255, 0.3)",
+                    : "rgba(255, 255, 255, 0.55)",
                 borderRadius: 12,
                 boxShadow:
                   index === slideIndex
-                    ? "0 0 18px rgba(25, 196, 138, 0.6)"
+                    ? "0 0 18px rgba(255, 108, 55, 0.55)"
                     : undefined,
               }}
             />

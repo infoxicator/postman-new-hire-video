@@ -1,88 +1,88 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff;
-  --foreground: #000;
-  --unfocused-border-color: #eaeaea;
-  --focused-border-color: #666;
+  --background: #ffffff;
+  --foreground: #1b1c1d;
+  --unfocused-border-color: #e6e1dd;
+  --focused-border-color: #ff6c37;
 
-  --button-disabled-color: #fafafa;
-  --disabled-text-color: #999;
+  --button-disabled-color: #f3f3f3;
+  --disabled-text-color: #9f9f9f;
 
-  --geist-border-radius: 5px;
+  --geist-border-radius: 8px;
   --geist-quarter-pad: 6px;
   --geist-half-pad: 12px;
   --geist-pad: 24px;
   --geist-font: "Inter";
 
-  --geist-error: #e00;
+  --geist-error: #d1432f;
 
-  --subtitle: #666;
+  --subtitle: #6b7076;
 }
 
 html {
-  background-color: #05060d;
+  background-color: #f5f1ef;
 }
 
 body {
   margin: 0;
-  background-color: #05060d;
+  background-color: #f5f1ef;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
-    --unfocused-border-color: #333;
-    --focused-border-color: #888;
-    --foreground: #fff;
-    --button-disabled-color: #111;
-    --geist-error: red;
-    --subtitle: #8d8d8d;
+    --background: #1f1f21;
+    --unfocused-border-color: #3a3a40;
+    --focused-border-color: #ff7f4e;
+    --foreground: #f8f8f9;
+    --button-disabled-color: #2f2f33;
+    --geist-error: #ff7f4e;
+    --subtitle: #a9adb5;
   }
 }
 
 
 .tbpn-headline {
-  font-family: "Space Grotesk", "Saira", "Montserrat", "Helvetica", sans-serif;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: 700;
-  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
+  font-family: "Inter", "Helvetica Neue", "Helvetica", sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .tbpn-subheadline {
-  font-family: "Space Grotesk", "Saira", "Montserrat", "Helvetica", sans-serif;
+  font-family: "Inter", "Helvetica Neue", "Helvetica", sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 600;
-  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.65);
+  color: var(--subtitle);
 }
 
 .tbpn-body {
   font-family: "Inter", "Outfit", "Helvetica", sans-serif;
+  color: var(--foreground);
 }
 
 .tbpn-panel {
-  background: linear-gradient(155deg, #050807 0%, #02110c 55%, #000000 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #fdf7f4 100%);
   border-radius: 28px;
-  border: 1px solid rgba(13, 71, 49, 0.55);
-  box-shadow: 0 40px 90px rgba(2, 12, 9, 0.6);
+  border: 1px solid rgba(255, 108, 55, 0.18);
+  box-shadow: 0 35px 70px rgba(81, 46, 29, 0.08);
 }
 
 .tbpn-chip {
-  font-family: "Space Grotesk", "Saira", "Montserrat", sans-serif;
-  letter-spacing: 0.12em;
+  font-family: "Inter", "Helvetica Neue", "Helvetica", sans-serif;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0.4rem 1.1rem;
   border-radius: 999px;
-  font-size: clamp(0.6rem, 1vw, 0.72rem);
-  background: linear-gradient(135deg, rgba(18, 220, 149, 0.92) 0%, rgba(0, 170, 121, 0.9) 45%, rgba(0, 140, 104, 0.95) 100%);
-  color: #02130d;
-  box-shadow: 0 16px 36px rgba(2, 190, 130, 0.45), 0 0 16px rgba(0, 255, 198, 0.48);
-  border: 1px solid rgba(166, 255, 216, 0.35);
+  font-size: clamp(0.64rem, 1vw, 0.75rem);
+  background: rgba(255, 108, 55, 0.12);
+  color: #a04927;
+  border: 1px solid rgba(255, 108, 55, 0.3);
   text-shadow: none;
 }
 
@@ -91,24 +91,24 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: rgba(4, 32, 22, 0.85);
-  box-shadow: inset 0 0 0 1px rgba(4, 32, 22, 0.25);
+  background: #ff6c37;
+  box-shadow: 0 0 0 2px rgba(255, 108, 55, 0.2);
 }
 
 .tbpn-label {
-  font-family: "Space Grotesk", "Saira", "Montserrat", sans-serif;
-  letter-spacing: 0.16em;
+  font-family: "Inter", "Helvetica Neue", "Helvetica", sans-serif;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-size: clamp(0.6rem, 0.95vw, 0.72rem);
+  font-size: clamp(0.64rem, 0.95vw, 0.74rem);
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: #eefdf6;
-  background: linear-gradient(130deg, rgba(24, 176, 125, 0.22), rgba(10, 132, 92, 0.16));
+  color: #a04927;
+  background: rgba(255, 108, 55, 0.08);
   border-radius: 999px;
   padding: 0.45rem 1.1rem;
-  border: 1px solid rgba(78, 216, 169, 0.5);
-  text-shadow: 0 2px 14px rgba(6, 24, 18, 0.7);
+  border: 1px solid rgba(255, 108, 55, 0.22);
+  text-shadow: none;
 }
 
 .tbpn-label::before {
@@ -116,12 +116,12 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #16ffb9;
-  box-shadow: 0 0 12px rgba(22, 255, 185, 0.7);
+  background: #ff6c37;
+  box-shadow: 0 0 10px rgba(255, 108, 55, 0.35);
 }
 
 .tbpn-glow-border {
-  border-image: linear-gradient(90deg, #16ffb9 0%, #00c27a 50%, #0cffa6 100%) 1;
+  border-image: linear-gradient(90deg, #ff6c37 0%, rgba(255, 108, 55, 0.65) 55%, #ff8a5b 100%) 1;
   border-width: 1px;
 }
 

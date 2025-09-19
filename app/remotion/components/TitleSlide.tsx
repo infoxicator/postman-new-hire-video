@@ -12,7 +12,7 @@ type TitleSlideProps = {
   image?: string;
 };
 
-const fallbackGradient = "linear-gradient(180deg, #0b5a3d 0%, #043226 100%)";
+const fallbackGradient = "linear-gradient(180deg, #fff5ef 0%, #ffe3d2 100%)";
 
 export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
   const frame = useCurrentFrame();
@@ -55,8 +55,8 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
         background: fallbackGradient,
         position: "relative",
         overflow: "hidden",
-        color: "#ffffff",
-        fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        color: "#1b1c1d",
+        fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif",
       }}
     >
       {image ? (
@@ -75,7 +75,7 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
 
       <AbsoluteFill
         style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.7))",
+          background: "linear-gradient(180deg, rgba(255,245,239,0.05), rgba(27,28,29,0.78))",
           opacity: overlayOpacity,
         }}
       />
@@ -98,10 +98,10 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
             gap: 24,
             padding: "32px 80px",
             borderRadius: 0,
-            background: "linear-gradient(90deg, rgba(0,0,0,0.65), rgba(0,0,0,0.2))",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-            boxShadow: "0 18px 38px rgba(0,0,0,0.45)",
+            background: "linear-gradient(90deg, rgba(27,28,29,0.75), rgba(27,28,29,0.35))",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            boxShadow: "0 28px 60px rgba(81,46,29,0.28)",
             width: "100%",
             opacity: titleOpacity,
             transform: `translateY(${titleTranslate}px)`
@@ -113,12 +113,12 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
               textTransform: "uppercase",
               fontWeight: 700,
               fontSize: 32,
-              backgroundColor: "rgba(25, 196, 138, 0.18)",
-              color: "#ffffff",
+              backgroundColor: "rgba(255, 108, 55, 0.18)",
+              color: "#ffefe8",
               padding: "12px 36px",
               borderRadius: 999,
-              border: "1px solid rgba(255,255,255,0.35)",
-              boxShadow: "0 10px 24px rgba(0,0,0,0.35)",
+              border: "1px solid rgba(255,108,55,0.45)",
+              boxShadow: "0 18px 32px rgba(81,46,29,0.2)",
             }}
           >
             Breaking News
@@ -137,6 +137,7 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
               gap: 12,
               textAlign: "center",
               width: "100%",
+              color: "#ffffff",
             }}
           >
             {words.map((word, index) => {
@@ -158,7 +159,7 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ title, image }) => {
                     display: "inline-block",
                     transform: `scale(${scale})`,
                     textShadow:
-                      "0 14px 28px rgba(0,0,0,0.55), 0 0 18px rgba(0,0,0,0.4)",
+                      "0 14px 28px rgba(81,46,29,0.55), 0 0 18px rgba(255,108,55,0.38)",
                   }}
                 >
                   {word}

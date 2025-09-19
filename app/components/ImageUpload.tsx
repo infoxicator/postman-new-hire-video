@@ -196,8 +196,8 @@ const ImageUploadInner: React.ForwardRefRenderFunction<
   return (
     <div>
       <div
-        className={`rounded-[18px] border border-dashed p-geist text-sm transition-colors duration-150 ease-in-out bg-[#050b09] text-foreground border-[#1c5f47] ${
-          isBusy ? "opacity-60" : "hover:border-[#28fcb0]"
+        className={`rounded-[18px] border border-dashed p-geist text-sm transition-colors duration-150 ease-in-out bg-[#ffffff] text-foreground border-[#f0c9bd] shadow-[0_1px_3px_rgba(15,15,18,0.08)] ${
+          isBusy ? "opacity-60" : "hover:border-[#ff6c37]"
         }`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -205,11 +205,11 @@ const ImageUploadInner: React.ForwardRefRenderFunction<
         <label className="cursor-pointer block" htmlFor="imageFile">
           <div className="flex flex-col items-center gap-3 text-center">
             <div className="text-2xl">📁</div>
-            <p className="tbpn-subheadline text-[#d7ffef] text-xs">{statusMessage}</p>
-            {isUploading ? <div className="text-xs text-[#6feab9]">{t.imageUploading}</div> : null}
-            {uploadError ? <div className="text-xs text-[#ff88d5]">{uploadError}</div> : null}
+            <p className="tbpn-subheadline text-[#6b7076] text-xs">{statusMessage}</p>
+            {isUploading ? <div className="text-xs text-[#ff6c37]">{t.imageUploading}</div> : null}
+            {uploadError ? <div className="text-xs text-[#d1432f]">{uploadError}</div> : null}
             {uploadedImageUrl ? (
-              <div className="text-xs text-[#36ffc3]">{t.imageUploadSuccess}</div>
+              <div className="text-xs text-[#ff6c37]">{t.imageUploadSuccess}</div>
             ) : null}
           </div>
         </label>
@@ -225,12 +225,12 @@ const ImageUploadInner: React.ForwardRefRenderFunction<
       </div>
       {localPreviewUrl ? (
         <div className="mt-3">
-          <img src={localPreviewUrl} alt="Preview" className="max-h-48 rounded-[18px] object-cover border border-[#1d6f53]" />
+          <img src={localPreviewUrl} alt="Preview" className="max-h-48 rounded-[18px] object-cover border border-[#ffcbb8]" />
         </div>
       ) : null}
       {!localPreviewUrl && uploadedImageUrl ? (
         <div className="mt-3">
-          <img src={uploadedImageUrl} alt="Uploaded preview" className="max-h-48 rounded-[18px] object-cover border border-[#1d6f53]" />
+          <img src={uploadedImageUrl} alt="Uploaded preview" className="max-h-48 rounded-[18px] object-cover border border-[#ffcbb8]" />
         </div>
       ) : null}
     </div>

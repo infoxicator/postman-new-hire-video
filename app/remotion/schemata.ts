@@ -44,4 +44,5 @@ export const StoryResponse = z.object({
       })
     )
     .min(1),
+  newHireName: z.string().optional(),
 });

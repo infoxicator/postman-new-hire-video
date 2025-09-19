@@ -19,9 +19,9 @@ const ButtonForward: React.ForwardRefRenderFunction<
     <button
       ref={ref}
       className={cn(
-        "border-foreground border rounded-geist bg-foreground text-background px-geist-half font-geist h-10 font-medium transition-all duration-150 ease-in-out inline-flex items-center appearance-none text-sm hover:bg-background hover:text-foreground hover:border-focused-border-color disabled:bg-button-disabled-color disabled:text-disabled-text-color disabled:border-unfocused-border-color disabled:cursor-not-allowed",
+        "rounded-geist border border-transparent bg-[#ff6c37] px-geist font-geist h-11 text-sm font-semibold inline-flex items-center justify-center text-white shadow-[0_12px_30px_rgba(255,108,55,0.25)] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6c37] hover:bg-[#ff814f] disabled:bg-button-disabled-color disabled:text-disabled-text-color disabled:shadow-none disabled:cursor-not-allowed",
         secondary
-          ? "bg-background text-foreground border-unfocused-border-color"
+          ? "bg-transparent text-foreground border-unfocused-border-color hover:border-[#ff6c37] hover:text-[#ff6c37]"
           : undefined,
         className,
       )}
@@ -31,8 +31,8 @@ const ButtonForward: React.ForwardRefRenderFunction<
     >
       {loading && (
         <>
-          <Spinner size={20}></Spinner>
-          <Spacing></Spacing>
+          <Spinner size={20} color="#ffffff" />
+          <Spacing />
         </>
       )}
       {children}

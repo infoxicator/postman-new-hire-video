@@ -22,17 +22,17 @@ export async function clientLoader() {
 
 export function HydrateFallback() {
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10 pt-20">
         <div className="mx-auto w-full max-w-[360px]">
-          <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#19cc8d] shadow-[0_45px_140px_rgba(12,64,46,0.55)] aspect-[9/16]">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#072f22] via-[#041912] to-[#010705]" aria-hidden />
-            <div className="absolute -inset-8 bg-[radial-gradient(circle_at_top,#29ffb6_0%,rgba(10,44,32,0)_65%)] opacity-30" aria-hidden />
+          <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#ffd0bf] shadow-[0_35px_80px_rgba(119,77,54,0.18)] aspect-[9/16] bg-gradient-to-br from-[#fff7f3] via-[#fff4ef] to-[#ffe9df]">
             <div className="relative flex h-full w-full items-center justify-center">
               <Loading
                 compact
-                title="Rendering video…"
-                subtitle="🤖 *beep boop* rumor mill spinning up"
+                title="Rendering welcome video…"
+                subtitle="Assembling graphics and narration"
+                titleClassName="text-[#1b1c1d]"
+                subtitleClassName="text-[#6b7076]"
               />
             </div>
           </div>
@@ -51,10 +51,10 @@ export default function Index({ loaderData }: { loaderData: z.infer<typeof Story
   }, [storyData]);
 
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10 pt-20">
         <div className="mx-auto w-full max-w-[360px]">
-          <div className="overflow-hidden rounded-[28px] shadow-[0_35px_110px_rgba(0,0,0,0.55)] border border-[#124c38] mb-12 mt-8 aspect-[9/16]">
+          <div className="overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(81,46,29,0.18)] border border-[#f0c9bd] mb-12 mt-8 aspect-[9/16] bg-white">
             <Player
               component={Main}
               inputProps={inputProps}

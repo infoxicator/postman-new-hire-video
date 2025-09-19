@@ -16,35 +16,36 @@ import { Loading } from "./components/Loading";
 import { Input } from "./components/Input";
 import { Button } from "./components/Button";
 import { ImageUpload, ImageUploadHandle } from "./components/ImageUpload";
+import type { StoryData } from "./remotion/types";
 
 type BlogLoaderData = {
   profilePic?: string | null;
   name?: string | null;
-  company?: string | null;
-  storyData?: z.infer<typeof StoryResponse> | null;
+  role?: string | null;
+  storyData?: StoryData | null;
 };
 
 export async function clientLoader({ request }: { request: Request }): Promise<BlogLoaderData> {
   const url = new URL(request.url);
   const profilePic = url.searchParams.get("image");
   const name = url.searchParams.get("name");
-  const company = url.searchParams.get("company");
+  const role = url.searchParams.get("role");
 
-  if (!profilePic || !name || !company) {
-    return { profilePic: null, name: null, company: null, storyData: null };
+  if (!profilePic || !name || !role) {
+    return { profilePic: null, name: null, role: null, storyData: null };
   }
 
   try {
     // Using POST for reliability since browsers ignore GET bodies
     const res = await fetch(
-      "https://postman.flows.pstmn.io/api/default/get-mcp-ui-stories",
+      "https://postman.flows.pstmn.io/api/default/new-hire-video",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           profilePic,
-          company,
+          role,
         }),
       }
     );
@@ -59,10 +60,11 @@ export async function clientLoader({ request }: { request: Request }): Promise<B
 
     const parsed = StoryResponse.safeParse(initial);
     if (!parsed.success) throw parsed.error;
-    return { profilePic, name, company, storyData: parsed.data };
+    const story: StoryData = { ...parsed.data, newHireName: name?.trim() || undefined };
+    return { profilePic, name, role, storyData: story };
   } catch (_err) {
     // On error, keep UI visible and allow retry via input
-    return { profilePic, name, company, storyData: null };
+    return { profilePic, name, role, storyData: null };
   }
 }
 
@@ -71,7 +73,7 @@ export function HydrateFallback() {
     <div className="max-w-screen-md m-auto mb-5">
       <div className="overflow-hidden rounded-geist shadow-[0_0_200px_rgba(0,0,0,0.15)] mb-10 mt-16 bg-background">
         <div className="aspect-[9/16] flex items-center justify-center">
-          <Loading compact title="Rendering video…" subtitle="Fetching blog content and preparing assets" />
+          <Loading compact title="Rendering welcome video…" subtitle="Preparing assets" />
         </div>
       </div>
     </div>
@@ -81,13 +83,11 @@ export function HydrateFallback() {
 export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   const [pending, setPending] = useState(false);
   const [nameInput, setNameInput] = useState(loaderData.name ?? "");
-  const [companyInput, setCompanyInput] = useState(loaderData.company ?? "");
+  const [roleInput, setRoleInput] = useState(loaderData.role ?? "");
   const [promptInput, setPromptInput] = useState("");
   const [showNerdSection, setShowNerdSection] = useState(false);
 
-  const [storyData, setStoryData] = useState<z.infer<typeof StoryResponse> | undefined>(
-    loaderData.storyData ?? undefined
-  );
+  const [storyData, setStoryData] = useState<StoryData | undefined>(loaderData.storyData ?? undefined);
   const [selectedProfileFile, setSelectedProfileFile] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(
     loaderData.profilePic ?? null
@@ -113,13 +113,13 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
     setImageMode(nextMode);
     setProfileImageUrl(nextMode === "upload" ? incomingPic : null);
     setProfileUrlInput(incomingPic ?? "");
-    setCompanyInput(loaderData.company ?? "");
+    setRoleInput(loaderData.role ?? "");
     setStoryData(loaderData.storyData ?? undefined);
     setPromptInput("");
     setError(null);
     setUploadingImage(false);
     setPending(false);
-  }, [loaderData.name, loaderData.profilePic, loaderData.company, loaderData.storyData]);
+  }, [loaderData.name, loaderData.profilePic, loaderData.role, loaderData.storyData]);
 
   useEffect(() => {
     if (!pending && inputProps) {
@@ -158,38 +158,38 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
     e.preventDefault();
     setError(null);
     const trimmedName = nameInput.trim();
-    const trimmedCompany = companyInput.trim();
+    const trimmedRole = roleInput.trim();
     const trimmedPrompt = promptInput.trim();
-    if (!trimmedName || !trimmedCompany) {
-      setError("We need a name and future employer to stir the rumor mill.");
+    if (!trimmedName || !trimmedRole) {
+      setError("Please add the new hire's name and team before generating the video.");
       return;
     }
     if (uploadingImage) {
-      setError("Hang tight—our upload gremlins are still finishing their magic.");
+      setError("Image upload is still in progress. Wait until the file is ready.");
       return;
     }
 
     const resolvedProfilePic = imageMode === "upload" ? profileImageUrl : profileUrlInput.trim();
 
     if (!resolvedProfilePic) {
-      setError("Glamour shot required—upload one or drop in a URL so the tabloids have art.");
+      setError("Add a headshot by uploading a file or linking to a hosted image.");
       return;
     }
     if (imageMode === "url" && !/^https?:\/\//i.test(resolvedProfilePic)) {
-      setError("The URL needs to start with http:// or https:// so we can fetch their glam photo.");
+      setError("Image URLs must start with http:// or https://.");
       return;
     }
     setPending(true);
     try {
       const res = await fetch(
-        "https://postman.flows.pstmn.io/api/default/get-mcp-ui-stories",
+        "https://postman.flows.pstmn.io/api/default/new-hire-video",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: trimmedName,
             profilePic: resolvedProfilePic,
-            company: trimmedCompany,
+            role: trimmedRole,
             ...(trimmedPrompt ? { prompt: trimmedPrompt } : {}),
           }),
         }
@@ -204,10 +204,11 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
 
       const parsed = StoryResponse.safeParse(initial);
       if (!parsed.success) throw parsed.error;
-      setStoryData(parsed.data);
+      const story: StoryData = { ...parsed.data, newHireName: trimmedName };
+      setStoryData(story);
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : "Failed to load story";
-      setError(`Our gossip hotline glitched: ${errMessage}`);
+      setError(`We couldn't generate the draft: ${errMessage}`);
       setStoryData(undefined);
     } finally {
       setPending(false);
@@ -215,66 +216,66 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
   }
 
   return (
-    <div className="bg-[#05060d] tbpn-body min-h-screen text-[#f4f6ff] pb-16">
+    <div className="bg-[#f5f1ef] tbpn-body min-h-screen text-[#1b1c1d] pb-16">
       <div className="max-w-screen-lg m-auto px-6 md:px-10">
         {/* Story input form */}
         <form onSubmit={handleSubmit}>
-          <div className="tbpn-panel px-7 py-9 md:px-12 md:py-12 flex flex-col gap-7 text-[#e1fff5]">
+          <div className="tbpn-panel px-7 py-9 md:px-12 md:py-12 flex flex-col gap-7 text-[#1b1c1d]">
             <div>
-              <p className="tbpn-chip">Rumor Intake</p>
-              <h2 className="tbpn-headline text-4xl md:text-5xl text-white mt-4">Let's script their grand exit</h2>
-              <p className="text-sm md:text-base text-[#b5f9db] mt-4 max-w-2xl">
-                Spill the details—who's peacing out, where they’re landing, and which promo pic belongs on the farewell ticker.
+              <p className="tbpn-chip">Welcome Video Brief</p>
+              <h2 className="tbpn-headline text-4xl md:text-5xl mt-4">Produce a polished introduction for your new teammate</h2>
+              <p className="text-sm md:text-base text-[#6b7076] mt-4 max-w-2xl">
+                Share the essentials so we can generate a warm, on-brand welcome video that your new hire receives before their first day.
               </p>
             </div>
 
             <div className="grid gap-5">
               <div>
-              <label className="tbpn-label">Star of the show</label>
+              <label className="tbpn-label">New hire name</label>
                 <Input
                   disabled={pending}
                   text={nameInput}
                   setText={setNameInput}
-                  placeholder="e.g. Casey the Code Whisperer"
-                  className="mt-3 bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
+                  placeholder="e.g. Abhinav Asthana"
+                  className="mt-3"
                 />
-                <p className="text-xs text-[#6fdab2] mt-3">We'll splash this name across the chyron like breaking news.</p>
+                <p className="text-xs text-[#6b7076] mt-3">We surface this name throughout the script and lower thirds.</p>
               </div>
 
               <div>
-                <label className="tbpn-label">New gig aka the destination</label>
-                <Input
+              <label className="tbpn-label">Role or team</label>
+              <Input
                   disabled={pending}
-                  text={companyInput}
-                  setText={setCompanyInput}
-                  placeholder="Where are they defecting to?"
-                  className="mt-3 bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
+                  text={roleInput}
+                  setText={setRoleInput}
+                  placeholder="e.g. Software Engineer"
+                  className="mt-3"
                 />
-                <p className="text-xs text-[#6fdab2] mt-3">Name the shiny new playground so we can hype their next chapter.</p>
+                <p className="text-xs text-[#6b7076] mt-3">Mention where they'll contribute so the greeting feels specific.</p>
               </div>
 
               <div>
-                <label className="tbpn-label">Add insider intel (optional)</label>
+                <label className="tbpn-label">Highlight details (optional)</label>
                 <Input
                   disabled={pending}
                   text={promptInput}
                   setText={setPromptInput}
-                  placeholder="Optional details to add to this story i.e. insider information about the move"
-                  className="mt-3 bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
+                  placeholder="Include milestones, background, or fun facts to mention in the video"
+                  className="mt-3"
                 />
-                <p className="text-xs text-[#6fdab2] mt-3">Spill any extra tea that should make the reel juicier.</p>
+                <p className="text-xs text-[#6b7076] mt-3">Add a personal touch so colleagues can greet them with context.</p>
               </div>
 
               <div>
-                <label className="tbpn-label">Choose their glamour shot</label>
-                <p className="text-xs text-[#6fdab2] mt-3">Upload a file or toss in a URL—whichever makes their farewell look legendary.</p>
+                <label className="tbpn-label">Upload a headshot</label>
+                <p className="text-xs text-[#6b7076] mt-3">Attach a square photo or share a link to a hosted image.</p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"
-                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.2em] ${
+                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.18em] ${
                       imageMode === "upload"
-                        ? "border-[#2df7a7] bg-[#0c1f18] text-[#e8fff5]"
-                        : "border-[#104b38] bg-[#050b09] text-[#7cdcb0] hover:text-white hover:border-[#1c825c]"
+                        ? "border-[#ff6c37] bg-[#ff6c37] text-white shadow-[0_12px_24px_rgba(255,108,55,0.18)]"
+                        : "border-[#e6e1dd] bg-white text-[#6b7076] hover:border-[#ff6c37] hover:text-[#ff6c37]"
                     }`}
                     onClick={() => handleImageModeChange("upload", { openDialog: true })}
                     aria-pressed={imageMode === "upload"}
@@ -283,10 +284,10 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
                   </button>
                   <button
                     type="button"
-                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.2em] ${
+                    className={`px-4 py-2 text-xs tbpn-subheadline rounded-full border transition-colors duration-150 tracking-[0.18em] ${
                       imageMode === "url"
-                        ? "border-[#2df7a7] bg-[#0c1f18] text-[#e8fff5]"
-                        : "border-[#104b38] bg-[#050b09] text-[#7cdcb0] hover:text-white hover:border-[#1c825c]"
+                        ? "border-[#ff6c37] bg-[#ff6c37] text-white shadow-[0_12px_24px_rgba(255,108,55,0.18)]"
+                        : "border-[#e6e1dd] bg-white text-[#6b7076] hover:border-[#ff6c37] hover:text-[#ff6c37]"
                     }`}
                     onClick={() => handleImageModeChange("url")}
                     aria-pressed={imageMode === "url"}
@@ -315,8 +316,7 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
                       disabled={pending}
                       text={profileUrlInput}
                       setText={setProfileUrlInput}
-                      placeholder="https://example.com/their-glow-up.png"
-                      className="bg-[#050b09] border-[#1c5f47] focus:border-[#28fcb0] text-[#e1fff5] placeholder:text-[#3f7f68]"
+                      placeholder="https://example.com/new-hire-headshot.jpg"
                       type="url"
                     />
                     {profileUrlInput.trim() ? (
@@ -324,12 +324,12 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
                         <img
                           src={profileUrlInput.trim()}
                           alt="Profile preview"
-                          className="max-h-48 rounded-[18px] object-cover border border-[#2b3a66]"
+                          className="max-h-48 rounded-[18px] object-cover border border-[#ffcbb8]"
                         />
                       </div>
                     ) : null}
-                    <p className="text-xs text-[#6fdab2]">
-                      Make sure the link is public so our gossip bots can fetch it.
+                    <p className="text-xs text-[#6b7076]">
+                      Ensure the link is accessible without authentication.
                     </p>
                   </div>
                 ) : null}
@@ -337,7 +337,7 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
             </div>
 
             {error ? (
-              <div className="rounded-[18px] border border-[#ff88d5] bg-[#2b0a25] text-[#ffd8f1] text-sm px-5 py-4 shadow-[0_0_25px_rgba(255,119,200,0.35)]">
+              <div className="rounded-[18px] border border-[#f5b9aa] bg-[#fff4f0] text-[#7c2f1c] text-sm px-5 py-4 shadow-[0_12px_25px_rgba(244,137,98,0.12)]">
                 {error}
               </div>
             ) : null}
@@ -347,9 +347,9 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
                 type="submit"
                 loading={pending || uploadingImage}
                 disabled={pending || uploadingImage}
-                className="tbpn-headline tracking-[0.22em] text-sm h-12 px-8 bg-[#00b06f] text-black border-0 hover:bg-[#00dd8b] disabled:bg-[#0f3a28] disabled:text-[#76cbaa]"
+                className="tbpn-headline text-sm h-12 px-8"
               >
-                Spin the rumor reel
+                Generate welcome video
               </Button>
             </div>
           </div>
@@ -358,21 +358,21 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
         {/* Only render the player once we have story data */}
         <div ref={playerContainerRef} className="mx-auto w-full max-w-[360px]">
           {pending ? (
-            <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#19cc8d] shadow-[0_45px_140px_rgba(12,64,46,0.55)] aspect-[9/16]">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#072f22] via-[#041912] to-[#010705]" aria-hidden />
-              <div className="absolute -inset-8 bg-[radial-gradient(circle_at_top,#29ffb6_0%,rgba(10,44,32,0)_65%)] opacity-30" aria-hidden />
+            <div className="relative overflow-hidden rounded-[28px] mb-12 mt-8 border border-[#ffd0bf] shadow-[0_35px_80px_rgba(119,77,54,0.18)] aspect-[9/16] bg-gradient-to-br from-[#fff7f3] via-[#fff4ef] to-[#ffe9df]">
               <div className="relative flex h-full w-full items-center justify-center">
                 <Loading
                   compact
-                  title="Rendering video…"
-                  subtitle="🤖 *beep boop* rumor mill spinning up"
+                  title="Rendering welcome video…"
+                  subtitle="Assembling graphics and narration"
+                  titleClassName="text-[#1b1c1d]"
+                  subtitleClassName="text-[#6b7076]"
                 />
               </div>
             </div>
           ) : null}
 
           {!pending && inputProps ? (
-            <div className="overflow-hidden rounded-[28px] shadow-[0_35px_110px_rgba(0,0,0,0.55)] border border-[#124c38] mb-12 mt-8 aspect-[9/16]">
+            <div className="overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(81,46,29,0.18)] border border-[#f0c9bd] mb-12 mt-8 aspect-[9/16] bg-white">
               <Player
                 component={Main}
                 inputProps={inputProps}
@@ -389,11 +389,11 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
           ) : null}
 
           {!pending && !inputProps ? (
-            <div className="relative overflow-hidden rounded-[28px] border border-dashed border-[#1c5f47] bg-[#03120d] mb-12 mt-8 aspect-[9/16] flex items-center justify-center text-center px-6">
+            <div className="relative overflow-hidden rounded-[28px] border border-dashed border-[#e6e1dd] bg-white mb-12 mt-8 aspect-[9/16] flex items-center justify-center text-center px-6">
               <div>
-                <p className="tbpn-headline text-xl text-white">No reel yet</p>
-                <p className="mt-3 text-sm text-[#6fdab2]">
-                  Fill in the rumor form and smash “Spin the rumor reel” to generate a preview.
+                <p className="tbpn-headline text-xl">No welcome video yet</p>
+                <p className="mt-3 text-sm text-[#6b7076]">
+                  Complete the form and select “Generate welcome video” to preview the result.
                 </p>
               </div>
             </div>
@@ -407,25 +407,25 @@ export default function Blog({ loaderData }: { loaderData: BlogLoaderData }) {
         <Spacing />
         <Spacing />
 
-        <div className="tbpn-panel px-7 py-6 md:px-12 md:py-8 text-[#9ee9c9] flex flex-col items-center gap-4">
+        <div className="tbpn-panel px-7 py-6 md:px-12 md:py-8 text-[#6b7076] flex flex-col items-center gap-4">
           <button
             type="button"
             onClick={() => setShowNerdSection((prev) => !prev)}
-            className="tbpn-subheadline text-[11px] uppercase tracking-[0.3em] text-[#26ffb3] border border-[#1bd494] rounded-full px-4 py-2 transition-colors duration-200 hover:bg-[#073425]"
+            className="tbpn-subheadline text-[11px] uppercase tracking-[0.3em] text-[#ff6c37] border border-[#ffd0bf] rounded-full px-4 py-2 transition-colors duration-200 hover:bg-[#fff0ea]"
             aria-expanded={showNerdSection}
             aria-controls="nerd-notes"
           >
-            {showNerdSection ? "Close the nerd notes" : "For nerds 🤓"}
+            {showNerdSection ? "Hide implementation notes" : "Implementation notes"}
           </button>
           {showNerdSection ? (
             <div
               id="nerd-notes"
-              className="w-full rounded-[18px] border border-[#124c38] bg-[#031a13] p-4 shadow-[0_0_35px_rgba(18,76,56,0.35)]"
+              className="w-full rounded-[18px] border border-[#f0c9bd] bg-white p-4 shadow-[0_16px_35px_rgba(81,46,29,0.08)]"
             >
-              <p className="text-xs leading-6 text-[#b5f9db]">
-                The rumor reel runs on Remotion, Nano Banana and Cloudflare Workers. We gather story beats via a Postman Flows and stitch the video together in the browser before shipping it off for rendering.
+              <p className="text-xs leading-6 text-[#6b7076]">
+                This experience runs on Remotion, Nano Banana, and Cloudflare Workers. Postman Flows orchestrates the story data, and the browser assembles the composition before we hand it off for rendering.
               </p>
-              <div className="mt-3 aspect-video w-full overflow-hidden rounded-[12px] border border-[#0f3a28]">
+              <div className="mt-3 aspect-video w-full overflow-hidden rounded-[12px] border border-[#f0c9bd] bg-white">
                 <iframe
                   src="https://www.youtube.com/embed/42B_ia64QZU?si=NCFqdI906xS_2Dsx"
                   title="How this site was built"
