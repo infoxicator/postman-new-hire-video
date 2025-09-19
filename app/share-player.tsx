@@ -111,6 +111,15 @@ const ShareToTwitterButton: FC<{ shareUrl: string }> = ({ shareUrl }) => {
   const handleClick = () => {
     const tweetText = "Postman welcome video ready to share with the team.";
     const intentUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(tweetText)}`;
+    window.parent.postMessage(
+      {
+        type: "link",
+        payload: {
+          url: intentUrl,
+        },
+      },
+      "*"
+    );
     window.open(intentUrl, "_blank", "noopener,noreferrer");
   };
 
