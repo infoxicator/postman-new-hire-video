@@ -1,4 +1,4 @@
-import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
+import { AbsoluteFill, Sequence, useVideoConfig, Audio, staticFile } from "remotion";
 import { ImageTextSlide } from "./ImageTextSlide";
 import { TitleSlide } from "./TitleSlide";
 import { EndSlide } from "./EndSlide";
@@ -38,6 +38,9 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ storyData }) => {
         color: "#1b1c1d",
       }}
     >
+      <Audio src={staticFile("seamles-horizons.mp3")}
+        startFrom={0}
+      />
       <Sequence durationInFrames={titleDuration}>
         <TitleSlide
           title={storyData.title}
