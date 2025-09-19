@@ -39,7 +39,6 @@ export const StorySlides: React.FC<StorySlidesProps> = ({ storyData }) => {
       }}
     >
       <Audio src={staticFile("seamles-horizons.mp3")}
-        startFrom={0}
       />
       <Sequence durationInFrames={titleDuration}>
         <TitleSlide

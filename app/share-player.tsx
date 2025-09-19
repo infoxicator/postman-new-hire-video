@@ -225,7 +225,6 @@ export default function SharedRumorReel({ loaderData }: { loaderData: LoaderData
               compositionWidth={COMPOSITION_WIDTH}
               style={{ width: "100%", height: "100%" }}
               controls
-              autoPlay
               loop
             />
           </div>
